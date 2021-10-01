@@ -1,9 +1,12 @@
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -19,6 +22,8 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	//character storage class
 	private MegaMan megaMan;
 	
+	private Platform platform;
+	
 	//enemy storage class
 	
 	//threads
@@ -29,6 +34,7 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	private JLabel megaManLabel;
 	private ImageIcon megaManImage;
 	
+	Platform[] platforms; //array of platforms
 	
 	//container to contain elements
 	private Container content;
@@ -42,9 +48,15 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		//title
 		super("Mega Man");
 		setSize(GameProperties.SCREEN_WIDTH,GameProperties.SCREEN_HEIGHT);
+		//platforms = new Platform[13];
 		
 		megaMan = new MegaMan(100, 100, 100, 100, "res/standing.gif"); //new object
+		
+		
+		//makeWalls();
 		megaManLabel = new JLabel(); //label for object
+		
+		
 		
 		//System.out.println(megaMan.getSpriteImage());
 		megaManImage = new ImageIcon( getClass().getResource( megaMan.getSpriteImage() ) );
@@ -73,9 +85,29 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		
 		megaManThread = new Thread(megaMan, "MegaMan Thread");
 		megaManThread.start();
+		platform = new Platform();
+		System.out.println(platform.hitBox); //is has a hotbox. this is good. I'm jsut passing it wrong
 	}
 	
+//	public void makeWalls() {
+//		for(int i = 50; i< 650; i+= 50) {
+//			int index = 0;
+//			Platform platform = new Platform(i, 600, 50, 50);
+//			platforms[index] = platform;
+//			index ++;
+//			
+//			System.out.println(platforms[index]);
+//		}
+//	}
+	
 
+	public void paint(Graphics g) {
+		
+		super.paint(g);
+		
+		Graphics2D gtd = (Graphics2D) g;
+		platform.draw(gtd);
+	}
 	
 
 	

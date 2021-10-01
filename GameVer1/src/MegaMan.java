@@ -16,6 +16,12 @@ public class MegaMan extends Sprite implements Runnable {
 	private boolean jumpAttempt = false;
 	private boolean onGround = false;
 	private int jumpTime = 0;
+	
+	private Platform platform;
+	
+	
+	
+	public void setPlatform(Platform temp) {this.platform = temp;}
 	//private JLabel megaManLabel;
 	//long jumpUntil = 0;
 
@@ -36,6 +42,10 @@ public class MegaMan extends Sprite implements Runnable {
 	public void setJump(boolean jump) {
 		this.jumpAttempt = jump;
 	}
+	
+	private void detectPlatformCollision(){
+		;
+	}
 
 	@Override
 	public void run() {
@@ -45,13 +55,15 @@ public class MegaMan extends Sprite implements Runnable {
 			int y = this.getY();
 			int x = this.getX();
 			this.vy += GRAVITY;
+			//the object isn't being created in time I think? Not quite sure.
 			
+			System.out.println(platform.getRectangle());
 			//set test ground plane. replace with collision check later
-			if(y > 400) {
-				y = 400; //we can't go under this point
-				vy = 0; //reset our velocity
-				vx = 0;
-			}
+//			if(this.hitBox.intersects(platform.getRectangle())) {
+//				y = 400; //we can't go under this point
+//				vy = 0; //reset our velocity
+//				vx = 0;
+//			}
 			
 			if(vy == 0) {
 				onGround = true; //we are on the ground if our y vel is 0
