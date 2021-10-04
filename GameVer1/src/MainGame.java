@@ -23,6 +23,7 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	private MegaMan megaMan;
 	
 	private Platform platform;
+	private Platform platform2;
 	
 	//enemy storage class
 	
@@ -50,10 +51,13 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		setSize(GameProperties.SCREEN_WIDTH,GameProperties.SCREEN_HEIGHT);
 		//platforms = new Platform[13];
 		
-		megaMan = new MegaMan(100, 100, 100, 100, "res/standing.gif"); //new object
-		
+		megaMan = new MegaMan(100, 100, 70, 70, "res/standing.gif"); //new object
+		platform = new Platform();
+		//platform2 = new Platform(0, 300, 500, 50);
 		
 		//makeWalls();
+		
+		
 		megaManLabel = new JLabel(); //label for object
 		
 		
@@ -63,6 +67,7 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		megaManLabel.setIcon(megaManImage);
 		megaManLabel.setSize(megaMan.getWidth(), megaMan.getHeight());
 		megaMan.setLabelReference(megaManLabel);
+		megaMan.setPlatform(platform);
 		
 		
 		content = getContentPane();
@@ -84,9 +89,11 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		megaManThread = new Thread(megaMan, "MegaMan Thread");
+		
+		
+		 //is has a hotbox. this is good. I'm jsut passing it wrong
 		megaManThread.start();
-		platform = new Platform();
-		System.out.println(platform.hitBox); //is has a hotbox. this is good. I'm jsut passing it wrong
+		System.out.println(platform.hitBox);
 	}
 	
 //	public void makeWalls() {
@@ -107,6 +114,7 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		
 		Graphics2D gtd = (Graphics2D) g;
 		platform.draw(gtd);
+		megaMan.draw(gtd);
 	}
 	
 

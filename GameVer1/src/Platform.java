@@ -2,7 +2,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-public class Platform {
+public class Platform extends Sprite {
 	
 	int x;
 	int y;
@@ -12,7 +12,7 @@ public class Platform {
 	
 	public Platform() {
 		super();
-		this.x = 0;
+		this.x =400;
 		this.y = 400;
 		this.width = 1000;
 		this.height = 50;
@@ -25,7 +25,7 @@ public class Platform {
 	
 	public void draw(Graphics2D gtd) {
 		gtd.setColor(Color.BLACK);
-		gtd.fillRect(x, y, width, height);
+		gtd.fillRect(x, y + 45, width, height );
 	}
 
 }

@@ -1,8 +1,12 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+
 import javax.swing.JLabel;
 
 public class MegaMan extends Sprite implements Runnable {
 	
-	//gravity and jumping constants
+	//gravity and jumping constants <-- move these to game properties later
 	public static final int GRAVITY = 1;
 	public static final int JUMP_ACCEL_Y = -7;
 	public static final int JUMP_ACCEL_X = 5;
@@ -21,9 +25,9 @@ public class MegaMan extends Sprite implements Runnable {
 	
 	
 	
-	public void setPlatform(Platform temp) {this.platform = temp;}
-	//private JLabel megaManLabel;
-	//long jumpUntil = 0;
+	
+	
+	public void setPlatform(Platform temp) {this.platform = temp;}//passing memory location of class to object
 
 //	public void setMegaManLabel(JLabel temp) {
 //		this.megaManLabel = temp;
@@ -34,36 +38,43 @@ public class MegaMan extends Sprite implements Runnable {
 		super(x, y, width, height, spriteImage);
 	}
 	
-//	public MegaMan(JLabel temp) {
-//		super(100, 200,"standingR.gif");
-//		this.megaManLabel = temp;
-//	}
+
 
 	public void setJump(boolean jump) {
 		this.jumpAttempt = jump;
 	}
 	
-	private void detectPlatformCollision(){
-		;
-	}
-
 	@Override
 	public void run() {
-		
 		
 		while(true) {
 			int y = this.getY();
 			int x = this.getX();
 			this.vy += GRAVITY;
+			int py = platform.getY();
+			
+		
+			//Rectangle pHitBox = platform.getRectangle();
+			//System.out.println(pHitBox);
+			
 			//the object isn't being created in time I think? Not quite sure.
 			
-			System.out.println(platform.getRectangle());
+			//System.out.println(platform.getRectangle());
 			//set test ground plane. replace with collision check later
-//			if(this.hitBox.intersects(platform.getRectangle())) {
-//				y = 400; //we can't go under this point
-//				vy = 0; //reset our velocity
-//				vx = 0;
-//			}
+			if(this.hitBox.intersects(platform.hitBox) || this.y > 400 ){
+				//y = py; //we can't go under this point
+				vy = 0; //reset our velocity
+				vx = 0;
+				
+			}
+			
+			detectPlatformCollision();
+			
+			//System.out.println(platform.hitBox);
+			//System.out.println(this.hitBox);
+			
+			
+			//System.out.println(this.hitBox);
 			
 			if(vy == 0) {
 				onGround = true; //we are on the ground if our y vel is 0
@@ -89,6 +100,7 @@ public class MegaMan extends Sprite implements Runnable {
 			this.setX(x);
 			this.setY(y);
 			
+			
 			try {
 				Thread.sleep(1000/60);
 			} catch (Exception e) {
@@ -98,6 +110,17 @@ public class MegaMan extends Sprite implements Runnable {
 		
 	}
 	
+	private void detectPlatformCollision(){
+	if (this.hitBox.intersects(platform.hitBox)) {
+			System.out.println("Colitioned");
+		}
+		
+	}
+	
+	public void draw(Graphics2D gtd) {
+		gtd.setColor(Color.BLACK);
+		gtd.fillRect(x, y, width, height );
+	}
 }
 	
 	

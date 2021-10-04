@@ -7,8 +7,8 @@ import javax.swing.JLabel;
 public class Sprite {
 	
 	//data all sprites need
-	protected int x,y;
-	protected int width, height;
+	protected int x,y; //upper left
+	protected int width, height; //object size
 	protected String spriteImage;	
 	protected Rectangle hitBox;
 	
@@ -22,6 +22,7 @@ public class Sprite {
 	public int getWidth() {return width;}
 	public int getHeight() {return height;}
 	public String getSpriteImage() {return spriteImage;}
+	public Rectangle getRectangle() {return this.hitBox;}
 
 
 	//setters
@@ -97,10 +98,5 @@ public class Sprite {
 		
 		
 	}
-	
-	
-	
-	
-	
 	
 }
