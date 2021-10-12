@@ -11,6 +11,7 @@ public class MegaMan extends Sprite implements Runnable {
 	public static final int JUMP_ACCEL_Y = -7;
 	public static final int JUMP_ACCEL_X = 5;
 	public static final int MAX_JUMP_TIME = 2;
+	public static final int COLLISION_BUFFER = 7; //used to buffer collisions
 	
 	
 	//velocity vars
@@ -23,11 +24,13 @@ public class MegaMan extends Sprite implements Runnable {
 	
 	private Platform platform;
 	
-	
+	Platform[] platforms;
 	
 	
 	
 	public void setPlatform(Platform temp) {this.platform = temp;}//passing memory location of class to object
+	
+	public void setPlatforms(Platform[] temp) {this.platforms = temp;}
 
 //	public void setMegaManLabel(JLabel temp) {
 //		this.megaManLabel = temp;
@@ -56,25 +59,52 @@ public class MegaMan extends Sprite implements Runnable {
 		
 			//Rectangle pHitBox = platform.getRectangle();
 			//System.out.println(pHitBox);
+//			if (this.y > 400) {
+//				vy = 0; //reset our velocity
+//				vx = 0;
+//			}
 			
-			//the object isn't being created in time I think? Not quite sure.
 			
-			//System.out.println(platform.getRectangle());
-			//set test ground plane. replace with collision check later
-			if(this.hitBox.intersects(platform.hitBox) || this.y > 400 ){
-				//y = py; //we can't go under this point
-				vy = 0; //reset our velocity
-				vx = 0;
+			//platform movement
+			for (int i = 0; i < 3; i++) {
+				int px = platforms[i].getX();
+				px -= 1;
+				if (px + platforms[i].getWidth() < 0) {
+					px = GameProperties.SCREEN_WIDTH;
+				}
+				platforms[i].setX(px);
+			}
+			
+			for (int i = 0; i < 3; i++) {
+				
+				if(this.hitBox.intersects(platforms[i].hitBox)){
+					
+					
+					
+					//checking where collision is happening
+					
+					
+					//+15 at end to act as a buffer
+					if (y > platforms[i].y - platforms[i].height && y < (platforms[i].y - platforms[i].height)+15) {
+						vy = 0; //reset our velocity
+						vx = 0;
+					}else {
+					
+						if (x >= platforms[i].x - platforms[i].width && x < platforms[i].x) {
+							x = platforms[i].x - platforms[i].width;
+						} 
+						
+						if (x <= platforms[i].x + platforms[i].width && x > platforms[i].x) {
+							x = platforms[i].x + platforms[i].width;
+						}
+					}
+		
+					
+				}
 				
 			}
 			
-			detectPlatformCollision();
 			
-			//System.out.println(platform.hitBox);
-			//System.out.println(this.hitBox);
-			
-			
-			//System.out.println(this.hitBox);
 			
 			if(vy == 0) {
 				onGround = true; //we are on the ground if our y vel is 0

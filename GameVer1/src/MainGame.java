@@ -21,9 +21,14 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	
 	//character storage class
 	private MegaMan megaMan;
-	
 	private Platform platform;
-	private Platform platform2;
+	
+	
+	
+	
+	
+	
+	//private Platform platform2;
 	
 	//enemy storage class
 	
@@ -34,11 +39,15 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	//labels to show graphics
 	private JLabel megaManLabel;
 	private ImageIcon megaManImage;
+	private JLabel platformLabel;
+	private ImageIcon platformImage;
 	
 	Platform[] platforms; //array of platforms
 	
 	//container to contain elements
 	private Container content;
+	
+	int index = 0;
 	
 	
 	//GUI set up
@@ -49,16 +58,34 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		//title
 		super("Mega Man");
 		setSize(GameProperties.SCREEN_WIDTH,GameProperties.SCREEN_HEIGHT);
-		//platforms = new Platform[13];
-		
+	
 		megaMan = new MegaMan(100, 100, 70, 70, "res/standing.gif"); //new object
-		platform = new Platform();
-		//platform2 = new Platform(0, 300, 500, 50);
 		
-		//makeWalls();
+		Platform[] platforms = new Platform[15];
+		
+		for(int i = 100; i< 600; i+= 200) {
+			
+			platform = new Platform(i, 400 , 70, 70, "res/platform.jpg");
+			platforms[index] = platform;
+			
+			
+			platformLabel = new JLabel();
+			platformImage = new ImageIcon( getClass().getResource( platform.getSpriteImage() ) );
+			platformLabel.setIcon(platformImage);
+			platformLabel.setSize(platform.getWidth(), platform.getHeight());
+			platformLabel.setLocation(platform.x, platform.y);
+			platform.setLabelReference(platformLabel);
+			this.add(platformLabel);
+			
+			System.out.println(platform.getX() + platform.getY());
+			index ++;
+			
+			
+		}
 		
 		
 		megaManLabel = new JLabel(); //label for object
+
 		
 		
 		
@@ -68,6 +95,9 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		megaManLabel.setSize(megaMan.getWidth(), megaMan.getHeight());
 		megaMan.setLabelReference(megaManLabel);
 		megaMan.setPlatform(platform);
+		megaMan.setPlatforms(platforms);
+		
+
 		
 		
 		content = getContentPane();
@@ -78,6 +108,7 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		
 		//adding elements
 		this.add(megaManLabel);
+
 		
 		
 		
@@ -89,33 +120,26 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		megaManThread = new Thread(megaMan, "MegaMan Thread");
-		
-		
-		 //is has a hotbox. this is good. I'm jsut passing it wrong
+	
 		megaManThread.start();
-		System.out.println(platform.hitBox);
+		
+
+		
 	}
 	
-//	public void makeWalls() {
-//		for(int i = 50; i< 650; i+= 50) {
-//			int index = 0;
-//			Platform platform = new Platform(i, 600, 50, 50);
-//			platforms[index] = platform;
-//			index ++;
-//			
-//			System.out.println(platforms[index]);
-//		}
-//	}
+	public void makeWalls() {
+		for(int i = 50; i< 650; i+= 50) {
+			
+			Platform platform = new Platform(i, 600, 50, 50, "res/platform.jpg");
+			platforms[index] = platform;
+			index ++;
+			
+			System.out.println(platforms[index]);
+		}
+	}
 	
 
-	public void paint(Graphics g) {
-		
-		super.paint(g);
-		
-		Graphics2D gtd = (Graphics2D) g;
-		platform.draw(gtd);
-		megaMan.draw(gtd);
-	}
+	
 	
 
 	
