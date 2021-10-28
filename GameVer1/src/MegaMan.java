@@ -1,7 +1,11 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 public class MegaMan extends Sprite implements Runnable {
@@ -22,20 +26,34 @@ public class MegaMan extends Sprite implements Runnable {
 	private boolean onGround = false;
 	private int jumpTime = 0;
 	
-	private Platform platform;
 	
+	private Platform platform;
 	Platform[] platforms;
+	private JLabel projectileLabel;
+	private ImageIcon projectileImage;
+	
+	
 	
 	
 	
 	public void setPlatform(Platform temp) {this.platform = temp;}//passing memory location of class to object
 	
 	public void setPlatforms(Platform[] temp) {this.platforms = temp;}
-
-//	public void setMegaManLabel(JLabel temp) {
-//		this.megaManLabel = temp;
-//	}
+	
+	public Projectile shoot() {
+		Projectile projectile = new Projectile(this.x, this.y, 16, 13, "res/tinyProjectile.png");
+		projectileLabel = new JLabel();
+		projectileImage = new ImageIcon( getClass().getResource( projectile.getSpriteImage() ) );
+		projectileLabel.setIcon(projectileImage);
+		projectileLabel.setSize(projectile.getWidth(), projectile.getHeight());
+		projectileLabel.setLocation(this.x, this.y);
+		projectile.setLabelReference(projectileLabel);
 		
+		return projectile;
+		
+	}
+
+
 	
 	public MegaMan(int x, int y, int width, int height, String spriteImage) {
 		super(x, y, width, height, spriteImage);
@@ -55,14 +73,18 @@ public class MegaMan extends Sprite implements Runnable {
 			int x = this.getX();
 			this.vy += GRAVITY;
 			int py = platform.getY();
+			int projectileX;
 			
-		
-			//Rectangle pHitBox = platform.getRectangle();
-			//System.out.println(pHitBox);
-//			if (this.y > 400) {
-//				vy = 0; //reset our velocity
-//				vx = 0;
-//			}
+			
+			//projectile movement loop
+			if (MainGame.currentProjectiles.size() != 0) {
+				for (int i = 0; i < MainGame.currentProjectiles.size(); i++ ) {
+					projectileX = MainGame.currentProjectiles.get(i).getX();
+					projectileX += 5;
+					
+					MainGame.currentProjectiles.get(i).setX(projectileX);
+				}
+			}
 			
 			
 			//platform movement
