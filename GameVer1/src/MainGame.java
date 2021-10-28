@@ -23,19 +23,15 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	//character storage class
 	private MegaMan megaMan;
 	private Platform platform;
-	private Projectile projectile;
+	private Baddie baddie;
+
+	//enemy storage array
+	public static Baddie[] baddies;
 	
-	
-	
-	
-	
-	
-	//private Platform platform2;
-	
-	//enemy storage class
 	
 	//threads
 	private Thread megaManThread;
+	private Thread baddieThread;
 	
 	
 	//labels to show graphics
@@ -43,10 +39,12 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	private ImageIcon megaManImage;
 	private JLabel platformLabel;
 	private ImageIcon platformImage;
-	private JLabel projectileLabel;
-	private ImageIcon projectileImage;
+	private JLabel baddieLabel;
+	private ImageIcon baddieImage;
+	
 	
 	public static List<Projectile> currentProjectiles = new ArrayList <Projectile>();
+	public static List<Baddie> currentBaddies = new ArrayList <Baddie>();
 	
 	Platform[] platforms; //array of platforms
 	
@@ -54,6 +52,8 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	private Container content;
 	
 	int index = 0;
+	int bxLocation = 0;
+	int byLocation = 0;
 	
 	
 	//GUI set up
@@ -66,8 +66,25 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		setSize(GameProperties.SCREEN_WIDTH,GameProperties.SCREEN_HEIGHT);
 	
 		megaMan = new MegaMan(100, 100, 70, 70, "res/standing.gif"); //new object
-		Projectile projectile = new Projectile(500, 500, 16, 13, "res/tinyProjectile.png");
 		
+		
+		for (int i = 0; i < 7; i++) {
+			
+			bxLocation = randInt(300, 900);
+			byLocation = randInt(0, 350);
+			baddie = new Baddie(bxLocation, byLocation, 39, 39, "res/bigbadjava.png");
+			
+			
+			baddieLabel = new JLabel();
+			baddieImage = new ImageIcon( getClass().getResource( baddie.getSpriteImage() ) );
+			baddieLabel.setIcon(baddieImage);
+			baddieLabel.setSize(baddie.getWidth(), baddie.getHeight());
+			baddieLabel.setLocation(baddie.x, baddie.y);
+			baddie.setLabelReference(baddieLabel);
+			this.add(baddieLabel);
+			currentBaddies.add(baddie);
+			
+		}
 		
 		Platform[] platforms = new Platform[15];
 		
@@ -105,17 +122,8 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		megaMan.setPlatform(platform);
 		megaMan.setPlatforms(platforms);
 		
-//		projectileLabel = new JLabel();
-		
-//		projectileImage = new ImageIcon( getClass().getResource( projectile.getSpriteImage() ) );
-//		projectileLabel.setIcon(projectileImage);
-//		projectileLabel.setSize(projectile.getWidth(), projectile.getHeight());
-		
-		
-		
 
-		
-		
+
 		content = getContentPane();
 		content.setBackground(Color.gray);
 		setLayout(null);
@@ -125,19 +133,16 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		//adding elements
 		this.add(megaManLabel);
 
-		
-		
-		
 	
-		
-		
 		content.addKeyListener(this);
 		content.setFocusable(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		megaManThread = new Thread(megaMan, "MegaMan Thread");
+		baddieThread = new Thread(baddie, "Baddie Thread");
 	
 		megaManThread.start();
+		baddieThread.start();
 		
 
 		
@@ -154,8 +159,10 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		}
 	}
 	
-
-	
+	//random number generator used for enemy placement
+	public int randInt(int Min, int Max) {
+	    return Min + (int)(Math.random() * (Max - Min + 1));
+	}
 	
 
 	
