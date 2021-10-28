@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -22,6 +23,7 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	//character storage class
 	private MegaMan megaMan;
 	private Platform platform;
+	private Projectile projectile;
 	
 	
 	
@@ -41,6 +43,10 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	private ImageIcon megaManImage;
 	private JLabel platformLabel;
 	private ImageIcon platformImage;
+	private JLabel projectileLabel;
+	private ImageIcon projectileImage;
+	
+	public static List<Projectile> currentProjectiles = new ArrayList <Projectile>();
 	
 	Platform[] platforms; //array of platforms
 	
@@ -60,6 +66,8 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		setSize(GameProperties.SCREEN_WIDTH,GameProperties.SCREEN_HEIGHT);
 	
 		megaMan = new MegaMan(100, 100, 70, 70, "res/standing.gif"); //new object
+		Projectile projectile = new Projectile(500, 500, 16, 13, "res/tinyProjectile.png");
+		
 		
 		Platform[] platforms = new Platform[15];
 		
@@ -96,6 +104,14 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		megaMan.setLabelReference(megaManLabel);
 		megaMan.setPlatform(platform);
 		megaMan.setPlatforms(platforms);
+		
+//		projectileLabel = new JLabel();
+		
+//		projectileImage = new ImageIcon( getClass().getResource( projectile.getSpriteImage() ) );
+//		projectileLabel.setIcon(projectileImage);
+//		projectileLabel.setSize(projectile.getWidth(), projectile.getHeight());
+		
+		
 		
 
 		
@@ -173,8 +189,25 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 			megaMan.setJump(true);
 		}
-
+		
+		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			
+			Projectile tempProjectile = megaMan.shoot();
+			currentProjectiles.add(tempProjectile);
+			
+			for (int i = 0; i < currentProjectiles.size(); i++) {
+				this.add(currentProjectiles.get(i).label);
+			}
+			
+			this.repaint();
+			
+			
+			
+			
+			
 		}
+
+	}
 		
 	
 
