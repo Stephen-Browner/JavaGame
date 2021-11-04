@@ -26,7 +26,7 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	private Baddie baddie;
 
 	//enemy storage array
-	public static Baddie[] baddies;
+	
 	
 	
 	//threads
@@ -68,7 +68,7 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		megaMan = new MegaMan(100, 100, 70, 70, "res/standing.gif"); //new object
 		
 		
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < 1; i++) {
 			
 			bxLocation = randInt(300, 900);
 			byLocation = randInt(0, 350);
@@ -121,6 +121,8 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		megaMan.setLabelReference(megaManLabel);
 		megaMan.setPlatform(platform);
 		megaMan.setPlatforms(platforms);
+		
+		baddie.setcurrentProjectiles(currentProjectiles);
 		
 
 
@@ -206,7 +208,7 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 				this.add(currentProjectiles.get(i).label);
 			}
 			
-			this.repaint();
+			//this.repaint();
 			
 			
 			

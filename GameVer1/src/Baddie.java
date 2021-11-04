@@ -1,5 +1,6 @@
 import java.awt.Rectangle;
 import java.util.List;
+import java.awt.Graphics;
 
 public class Baddie extends Sprite implements Runnable {
 	
@@ -27,25 +28,54 @@ public class Baddie extends Sprite implements Runnable {
 			int x = this.getX();
 			
 			if (MainGame.currentBaddies.size() != 0) {
-				for (int i = 0; i < 7; i++) {
+				for (int i = 0; i < MainGame.currentBaddies.size(); i++) {
 					x = MainGame.currentBaddies.get(i).getX();
 					x -= 1;
+					
+//					System.out.println(MainGame.currentBaddies.get(i).hitBox);
 					if (x + MainGame.currentBaddies.get(i).getWidth() < 0) {
 						x = GameProperties.SCREEN_WIDTH;
 					}
+					
 					MainGame.currentBaddies.get(i).setX(x);
 					
-					if (currentProjectiles != null) {
-						
-						System.out.println(currentProjectiles.get(i));
-						if(this.hitBox.intersects(currentProjectiles.get(i).hitBox)){
-							System.out.println("Collision");	
-						}
-						
-					}
+					
 					
 				}
 				
+				
+				if (currentProjectiles != null) {
+					
+					for(int i = 0; i < currentProjectiles.size(); i++ ) {
+						
+						for(int j = 0; j < MainGame.currentBaddies.size(); j++) {
+							
+							if(MainGame.currentBaddies.get(j).hitBox.intersects(currentProjectiles.get(i).hitBox)) {
+								//MainGame.currentBaddies.get(j).label = null;
+								//MainGame.currentBaddies.get(j).setLabelReference(null);
+								
+								MainGame.currentBaddies.get(j).label.setIcon(null);
+								MainGame.currentBaddies.remove(j);
+								
+								currentProjectiles.get(i).label.setIcon(null);
+								currentProjectiles.remove(i);
+								
+								
+//								for (int k = 0; k < MainGame.currentBaddies.size(); k++) {
+//									MainGame.currentBaddies.get(j).repaint();
+//								}
+								
+								
+								//currentProjectiles.remove(i);
+							}
+						}
+						
+					}
+						
+					
+					
+					
+				}
 //			for (int i = 0; i < currentProjectiles.size(); i++) {
 //					
 //			
