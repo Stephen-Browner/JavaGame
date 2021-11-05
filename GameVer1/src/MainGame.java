@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -17,7 +18,10 @@ import javax.swing.JLabel;
 
 public class MainGame extends JFrame implements ActionListener, KeyListener {
 	
+	//score
+	private static int score;
 	
+	public static int level;
 	
 	
 	//character storage class
@@ -41,10 +45,11 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	private ImageIcon platformImage;
 	private JLabel baddieLabel;
 	private ImageIcon baddieImage;
+	private static JLabel scoreLabel;
 	
 	
 	public static List<Projectile> currentProjectiles = new ArrayList <Projectile>();
-	public static List<Baddie> currentBaddies = new ArrayList <Baddie>();
+	public List<Baddie> currentBaddies = new ArrayList <Baddie>();
 	
 	Platform[] platforms; //array of platforms
 	
@@ -55,6 +60,8 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	int bxLocation = 0;
 	int byLocation = 0;
 	
+	private JButton startButton;
+	private JButton nextLevelButton;
 	
 	//GUI set up
 	public MainGame() {
@@ -64,27 +71,13 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		//title
 		super("Mega Man");
 		setSize(GameProperties.SCREEN_WIDTH,GameProperties.SCREEN_HEIGHT);
+		score = 0;
+		level = 1;
 	
 		megaMan = new MegaMan(100, 100, 70, 70, "res/standing.gif"); //new object
 		
+		createBaddies();
 		
-		for (int i = 0; i < 1; i++) {
-			
-			bxLocation = randInt(300, 900);
-			byLocation = randInt(0, 350);
-			baddie = new Baddie(bxLocation, byLocation, 39, 39, "res/bigbadjava.png");
-			
-			
-			baddieLabel = new JLabel();
-			baddieImage = new ImageIcon( getClass().getResource( baddie.getSpriteImage() ) );
-			baddieLabel.setIcon(baddieImage);
-			baddieLabel.setSize(baddie.getWidth(), baddie.getHeight());
-			baddieLabel.setLocation(baddie.x, baddie.y);
-			baddie.setLabelReference(baddieLabel);
-			this.add(baddieLabel);
-			currentBaddies.add(baddie);
-			
-		}
 		
 		Platform[] platforms = new Platform[15];
 		
@@ -110,6 +103,15 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		
 		
 		megaManLabel = new JLabel(); //label for object
+		scoreLabel = new JLabel("Score: " + score);
+		
+		 //+ Integer.toString(score)
+		//scoreLabel.setText("Score: ");
+		scoreLabel.setForeground(Color.BLACK);
+		scoreLabel.setLocation(400, -25);
+		scoreLabel.setSize(100, 100);
+		
+		//scoreLabel.setLocation(100, 100);
 
 		
 		
@@ -127,13 +129,16 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 
 
 		content = getContentPane();
-		content.setBackground(Color.gray);
+		//content.setBackground(Color.gray);
 		setLayout(null);
 		
 		
 		
 		//adding elements
 		this.add(megaManLabel);
+		this.add(scoreLabel);
+		System.out.println(scoreLabel.getLocation());
+		
 
 	
 		content.addKeyListener(this);
@@ -143,23 +148,19 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		megaManThread = new Thread(megaMan, "MegaMan Thread");
 		baddieThread = new Thread(baddie, "Baddie Thread");
 	
-		megaManThread.start();
-		baddieThread.start();
+		//megaManThread.start();
+		//baddieThread.start();
+		gameStart();
+		
+		baddie.setMainGame(this);
+		
+		
 		
 
 		
 	}
 	
-	public void makeWalls() {
-		for(int i = 50; i< 650; i+= 50) {
-			
-			Platform platform = new Platform(i, 600, 50, 50, "res/platform.jpg");
-			platforms[index] = platform;
-			index ++;
-			
-			System.out.println(platforms[index]);
-		}
-	}
+	
 	
 	//random number generator used for enemy placement
 	public int randInt(int Min, int Max) {
@@ -219,7 +220,6 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	}
 		
 	
-
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -231,15 +231,65 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+		if (e.getSource() == startButton) {
+			megaManThread.start();
+			baddieThread.start();
+			content.remove(startButton);
+			//startButton = null;
+		}
 		
 	}
+	
+	public void gameStart() {
+		startButton = new JButton("Start Game");
+		startButton.setSize(100, 100);
+		startButton.setLocation(350, 100);
+		startButton.addActionListener(this);
+		startButton.setFocusable(false);
+		this.add(startButton);
+		//startButton.
+	}
+	
+	public static void nextLevel() {
+		
+	}
+	
+	public static void updateScore(){
+		score += 100;
+		scoreLabel.setText("Score: " + score);
+	}
+	
+	public void createBaddies() {
+		for (int i = 0; i < 1; i++) {
+			
+			bxLocation = randInt(300, 900);
+			byLocation = randInt(0, 350);
+			baddie = new Baddie(bxLocation, byLocation, 39, 39, "res/bigbadjava.png");
+			
+			
+			baddieLabel = new JLabel();
+			baddieImage = new ImageIcon( getClass().getResource( baddie.getSpriteImage() ) );
+			baddieLabel.setIcon(baddieImage);
+			baddieLabel.setSize(baddie.getWidth(), baddie.getHeight());
+			baddieLabel.setLocation(baddie.x, baddie.y);
+			baddie.setLabelReference(baddieLabel);
+			this.add(baddieLabel);
+			currentBaddies.add(baddie);
+			
+		}
+	}
+
 	
 	public static void main(String[] args) {//MAIN GAME
 		// TODO Auto-generated method stub
 		
 		MainGame myGame = new MainGame();
 		myGame.setVisible(true);
+		
+		
+		//myGame.megaManThread.start();
+		//myGame.baddieThread.start();
+		
 	
 
 	}
