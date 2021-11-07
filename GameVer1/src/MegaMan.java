@@ -12,8 +12,8 @@ public class MegaMan extends Sprite implements Runnable {
 	
 	//gravity and jumping constants <-- move these to game properties later
 	public static final int GRAVITY = 1;
-	public static final int JUMP_ACCEL_Y = -7;
-	public static final int JUMP_ACCEL_X = 5;
+	public static final int JUMP_ACCEL_Y = -9;
+	public static final int JUMP_ACCEL_X = 3;
 	public static final int MAX_JUMP_TIME = 2;
 	public static final int COLLISION_BUFFER = 7; //used to buffer collisions
 	
@@ -32,11 +32,14 @@ public class MegaMan extends Sprite implements Runnable {
 	private JLabel projectileLabel;
 	private ImageIcon projectileImage;
 	
+	private MainGame game;
+	public void setMainGame(MainGame temp)		{this.game = temp;}
 	
 	
 	
 	
-	public void setPlatform(Platform temp) {this.platform = temp;}//passing memory location of class to object
+	
+	public void setPlatform(Platform temp) {this.platform = temp;}
 	
 	public void setPlatforms(Platform[] temp) {this.platforms = temp;}
 	
@@ -76,19 +79,25 @@ public class MegaMan extends Sprite implements Runnable {
 			int projectileX;
 			
 			
+			if(y > GameProperties.SCREEN_HEIGHT) {
+				game.gameOver();
+				
+				
+			}
 			//projectile movement loop
-			if (MainGame.currentProjectiles.size() != 0) {
-				for (int i = 0; i < MainGame.currentProjectiles.size(); i++ ) {
-					projectileX = MainGame.currentProjectiles.get(i).getX();
+			if (game.currentProjectiles.size() != 0) {
+				for (int i = 0; i < game.currentProjectiles.size(); i++ ) {
+					projectileX = game.currentProjectiles.get(i).getX();
 					projectileX += 5;
 					
-					MainGame.currentProjectiles.get(i).setX(projectileX);
+					game.currentProjectiles.get(i).setX(projectileX);
 				}
 			}
 			
 			
+			
 			//platform movement
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < 4; i++) {
 				int px = platforms[i].getX();
 				px -= 1;
 				if (px + platforms[i].getWidth() < 0) {
@@ -97,15 +106,13 @@ public class MegaMan extends Sprite implements Runnable {
 				platforms[i].setX(px);
 			}
 			
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < 4; i++) {
 				
 				if(this.hitBox.intersects(platforms[i].hitBox)){
 					
 					
 					
 					//checking where collision is happening
-					
-					
 					//+15 at end to act as a buffer
 					if (y > platforms[i].y - platforms[i].height && y < (platforms[i].y - platforms[i].height)+15) {
 						vy = 0; //reset our velocity
@@ -162,17 +169,9 @@ public class MegaMan extends Sprite implements Runnable {
 		
 	}
 	
-	private void detectPlatformCollision(){
-	if (this.hitBox.intersects(platform.hitBox)) {
-			System.out.println("Colitioned");
-		}
-		
-	}
 	
-	public void draw(Graphics2D gtd) {
-		gtd.setColor(Color.BLACK);
-		gtd.fillRect(x, y, width, height );
-	}
+	
+	
 }
 	
 	

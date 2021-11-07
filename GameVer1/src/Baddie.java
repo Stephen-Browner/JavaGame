@@ -82,6 +82,7 @@ public class Baddie extends Sprite implements Runnable {
 					//if baddies = 0, make more and increase level
 					if(game.currentBaddies.size() == 0) {
 						game.createBaddies();
+						MainGame.level ++;
 					}
 					
 				}

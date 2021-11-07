@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
+import java. awt. Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -46,9 +47,16 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	private JLabel baddieLabel;
 	private ImageIcon baddieImage;
 	private static JLabel scoreLabel;
+	private JLabel gameOverLabel;
+	private JLabel backgroundLabel;
+	private JLabel backgroundLabel2;
+	private JLabel backgroundLabel3;
+	private ImageIcon backgroundImageIcon;
+	private ImageIcon backgroundImageIcon2;
 	
 	
-	public static List<Projectile> currentProjectiles = new ArrayList <Projectile>();
+	
+	public List<Projectile> currentProjectiles = new ArrayList <Projectile>();
 	public List<Baddie> currentBaddies = new ArrayList <Baddie>();
 	
 	Platform[] platforms; //array of platforms
@@ -76,14 +84,33 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	
 		megaMan = new MegaMan(100, 100, 70, 70, "res/standing.gif"); //new object
 		
+		backgroundImageIcon = new ImageIcon(getClass().getResource("res/cloud.png"));
+		backgroundImageIcon2 = new ImageIcon(getClass().getResource("res/cloud2.png"));
+		
+		backgroundLabel = new JLabel(backgroundImageIcon);
+		backgroundLabel.setSize(200, 200);
+		backgroundLabel.setLocation(0, -60);
+		
+		backgroundLabel2 = new JLabel(backgroundImageIcon2);
+		backgroundLabel2.setSize(200, 200);
+		backgroundLabel2.setLocation(250, 0);
+		
+		backgroundLabel3 = new JLabel(backgroundImageIcon);
+		backgroundLabel3.setSize(200, 200);
+		backgroundLabel3.setLocation(550, -30);
+		
+		//backgroundLabel.setSize(800, 800);
+		//backgroundLabel.setVisible(true);
+		
+		
 		createBaddies();
 		
 		
 		Platform[] platforms = new Platform[15];
 		
-		for(int i = 100; i< 600; i+= 200) {
+		for(int i = 100; i< 1050; i+= 200) {
 			
-			platform = new Platform(i, 400 , 70, 70, "res/platform.jpg");
+			platform = new Platform(i, 400 , 120, 70, "res/platform2.jpg");
 			platforms[index] = platform;
 			
 			
@@ -111,6 +138,8 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		scoreLabel.setLocation(400, -25);
 		scoreLabel.setSize(100, 100);
 		
+		
+		
 		//scoreLabel.setLocation(100, 100);
 
 		
@@ -131,18 +160,24 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		content = getContentPane();
 		//content.setBackground(Color.gray);
 		setLayout(null);
+		//setContentPane(new JLabel(new ImageIcon ("res/background.gif")));
 		
 		
 		
 		//adding elements
+		content.setBackground(new Color (135, 206, 235));
+		
 		this.add(megaManLabel);
 		this.add(scoreLabel);
+		
+		
 		System.out.println(scoreLabel.getLocation());
 		
 
 	
 		content.addKeyListener(this);
 		content.setFocusable(true);
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		megaManThread = new Thread(megaMan, "MegaMan Thread");
@@ -153,9 +188,17 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		gameStart();
 		
 		baddie.setMainGame(this);
+		megaMan.setMainGame(this);
 		
 		
 		
+		
+		//System.out.println(backgroundLabel.getIcon());
+		//System.out.println(backgroundLabel);
+		
+		this.add(backgroundLabel);
+		this.add(backgroundLabel2);
+		this.add(backgroundLabel3);
 
 		
 	}
@@ -187,10 +230,16 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		//left and right move
 		if(e.getKeyCode() == KeyEvent.VK_A) {
 			mmx -= GameProperties.CHARACTER_STEP;
+			if (mmx < 0) {
+				mmx = 0;
+			} 
 		}
 		
-		if (e.getKeyCode() == KeyEvent.VK_D) {
+		if (e.getKeyCode() == KeyEvent.VK_D) {	
 			mmx += GameProperties.CHARACTER_STEP;
+			if (mmx > (GameProperties.SCREEN_WIDTH - megaMan.getWidth()) ) {
+				mmx = GameProperties.SCREEN_WIDTH - megaMan.getWidth();
+			}
 		}
 		
 		megaMan.setX(mmx);
@@ -240,6 +289,7 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		
 	}
 	
+	//triggers on program start. When clicked it starts the threads
 	public void gameStart() {
 		startButton = new JButton("Start Game");
 		startButton.setSize(100, 100);
@@ -250,20 +300,36 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		//startButton.
 	}
 	
-	public static void nextLevel() {
-		
-	}
 	
+	//triggers when enemy dies
 	public static void updateScore(){
 		score += 100;
 		scoreLabel.setText("Score: " + score);
 	}
 	
+	public void gameOver() {
+		gameOverLabel = new JLabel("GAME OVER");
+		gameOverLabel.setForeground(Color.BLACK);
+		gameOverLabel.setLocation(400, 100);
+		gameOverLabel.setSize(300, 300);
+		gameOverLabel.setFont(new Font("Serif", Font.BOLD, 20));
+		gameOverLabel.setVisible(false);
+		this.add(gameOverLabel);
+		gameOverLabel.setVisible(true);
+		//megaManThread.stop();
+		//baddieThread.stop();
+		
+		
+		//this.repaint();
+	}
+	
+	
+	//makes enemy arraylist
 	public void createBaddies() {
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 6; i++) {
 			
-			bxLocation = randInt(300, 900);
-			byLocation = randInt(0, 350);
+			bxLocation = randInt(300, 800);
+			byLocation = randInt(150, 300);
 			baddie = new Baddie(bxLocation, byLocation, 39, 39, "res/bigbadjava.png");
 			
 			
@@ -279,6 +345,7 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		}
 	}
 
+	
 	
 	public static void main(String[] args) {//MAIN GAME
 		// TODO Auto-generated method stub
