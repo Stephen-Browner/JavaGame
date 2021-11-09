@@ -14,6 +14,9 @@ public class Baddie extends Sprite implements Runnable {
 	private List<Projectile> currentProjectiles;
 	
 	private MainGame game;
+	private MegaMan megaMan;
+	
+	public void setMegaMan(MegaMan temp)		{this.megaMan = temp;}
 	
 	public void setMainGame(MainGame temp)		{this.game = temp;}
 	
@@ -30,6 +33,8 @@ public class Baddie extends Sprite implements Runnable {
 			
 			int y = this.getY();
 			int x = this.getX();
+			int health = megaMan.getHealth();
+			
 			
 			if (game.currentBaddies.size() != 0) {
 				for (int i = 0; i < game.currentBaddies.size(); i++) {
@@ -43,9 +48,19 @@ public class Baddie extends Sprite implements Runnable {
 					
 					game.currentBaddies.get(i).setX(x);
 					
+					if(game.currentBaddies.get(i).hitBox.intersects(megaMan.hitBox)) {
+						health --;
+						megaMan.setHealth(health);
+						MainGame.healthLabel.setText("Health: " + String.valueOf(health));
+						if (health <= 0) {
+							game.gameOver();
+						}
+					}
+					
 					
 					
 				}
+				
 				
 				
 				if (currentProjectiles != null) {
@@ -83,6 +98,7 @@ public class Baddie extends Sprite implements Runnable {
 					if(game.currentBaddies.size() == 0) {
 						game.createBaddies();
 						MainGame.level ++;
+						MainGame.levelLabel.setText("Level: " + MainGame.level);
 					}
 					
 				}

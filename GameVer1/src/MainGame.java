@@ -6,6 +6,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java. awt. Font;
@@ -14,6 +20,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 
 
@@ -23,6 +30,9 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	private static int score;
 	
 	public static int level;
+	private int finalScore;
+	private String playerName; 
+	
 	
 	
 	//character storage class
@@ -47,6 +57,8 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	private JLabel baddieLabel;
 	private ImageIcon baddieImage;
 	private static JLabel scoreLabel;
+	public static JLabel levelLabel;
+	public static JLabel healthLabel;
 	private JLabel gameOverLabel;
 	private JLabel backgroundLabel;
 	private JLabel backgroundLabel2;
@@ -69,7 +81,7 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	int byLocation = 0;
 	
 	private JButton startButton;
-	private JButton nextLevelButton;
+	
 	
 	//GUI set up
 	public MainGame() {
@@ -81,8 +93,11 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		setSize(GameProperties.SCREEN_WIDTH,GameProperties.SCREEN_HEIGHT);
 		score = 0;
 		level = 1;
+		playerName = "";
 	
 		megaMan = new MegaMan(100, 100, 70, 70, "res/standing.gif"); //new object
+		megaMan.setHealth(50);
+		
 		
 		backgroundImageIcon = new ImageIcon(getClass().getResource("res/cloud.png"));
 		backgroundImageIcon2 = new ImageIcon(getClass().getResource("res/cloud2.png"));
@@ -130,13 +145,24 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		
 		
 		megaManLabel = new JLabel(); //label for object
-		scoreLabel = new JLabel("Score: " + score);
 		
-		 //+ Integer.toString(score)
-		//scoreLabel.setText("Score: ");
+		scoreLabel = new JLabel("Score: " + score);
+		scoreLabel.setFont(new Font("Serif", Font.BOLD, 16));
 		scoreLabel.setForeground(Color.BLACK);
-		scoreLabel.setLocation(400, -25);
+		scoreLabel.setLocation(300, -25);
 		scoreLabel.setSize(100, 100);
+		
+		levelLabel = new JLabel("Level: " + level);
+		levelLabel.setFont(new Font("Serif", Font.BOLD, 16));
+		levelLabel.setForeground(Color.BLACK);
+		levelLabel.setLocation(400, -25);
+		levelLabel.setSize(100, 100);
+		
+		healthLabel = new JLabel("Health: " + megaMan.getHealth());
+		healthLabel.setFont(new Font("Serif", Font.BOLD, 16));
+		healthLabel.setForeground(Color.RED);
+		healthLabel.setLocation(500, -25);
+		healthLabel.setSize(100, 100);
 		
 		
 		
@@ -154,6 +180,7 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		megaMan.setPlatforms(platforms);
 		
 		baddie.setcurrentProjectiles(currentProjectiles);
+		baddie.setMegaMan(megaMan);
 		
 
 
@@ -169,6 +196,8 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 		
 		this.add(megaManLabel);
 		this.add(scoreLabel);
+		this.add(levelLabel);
+		this.add(healthLabel);
 		
 		
 		System.out.println(scoreLabel.getLocation());
@@ -310,17 +339,21 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	public void gameOver() {
 		gameOverLabel = new JLabel("GAME OVER");
 		gameOverLabel.setForeground(Color.BLACK);
-		gameOverLabel.setLocation(400, 100);
+		gameOverLabel.setLocation(400, 50);
 		gameOverLabel.setSize(300, 300);
 		gameOverLabel.setFont(new Font("Serif", Font.BOLD, 20));
 		gameOverLabel.setVisible(false);
 		this.add(gameOverLabel);
 		gameOverLabel.setVisible(true);
-		//megaManThread.stop();
-		//baddieThread.stop();
+		this.remove(megaManLabel);
 		
+		finalScore = score * level;
 		
-		//this.repaint();
+		if (playerName.equals("")) {
+		getPlayerName();
+		insertIntoPlayers();
+		
+		}
 	}
 	
 	
@@ -344,6 +377,77 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 			
 		}
 	}
+	
+	public void getPlayerName() {
+		playerName = JOptionPane.showInputDialog(content,"Good Job! Your final score was: " +
+												finalScore + "\nEnter your name to add to our score list!");
+	}
+	
+	//database function
+	public void insertIntoPlayers() {
+		
+		Connection conn = null;
+		Statement stmt = null;
+		
+
+		try {
+			Class.forName("org.sqlite.JDBC");
+			
+			
+			String dbURL = "jdbc:sqlite:product.db";
+			conn = DriverManager.getConnection(dbURL);
+			conn.setAutoCommit(false);
+			
+			
+			
+			stmt = conn.createStatement();//this is like a mysqli_query()
+			
+			String sql = "CREATE TABLE IF NOT EXISTS PLAYERS" +
+						"(ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+						 "NAME TEXT NOT NULL, "+
+						 "SCORE INT NOT NULL)";
+			stmt.executeUpdate(sql);
+			conn.commit();
+			
+			
+			
+			
+			sql = "INSERT INTO PLAYERS (NAME, SCORE) VALUES"+
+									   "('"+playerName+"', "+finalScore+")";
+			stmt.executeUpdate(sql);
+			conn.commit();
+			
+			
+			ResultSet rs = stmt.executeQuery("SELECT * FROM PLAYERS");
+			DisplayRecords(rs);
+			conn.close();
+			
+			
+			
+		} catch(ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+
+	}
+	
+	public static void DisplayRecords(ResultSet rs) throws SQLException {
+		while (rs.next()) {
+
+			String pName = rs.getString("name");
+			int pScore = rs.getInt("score");
+			System.out.println("--------------------------------");
+			System.out.println("Name = " + pName);
+			System.out.println("Score = " + pScore);
+			System.out.println("--------------------------------");
+			
+		}
+	}
 
 	
 	
@@ -360,5 +464,9 @@ public class MainGame extends JFrame implements ActionListener, KeyListener {
 	
 
 	}
+
+
+
+	
 
 }

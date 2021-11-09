@@ -21,6 +21,7 @@ public class MegaMan extends Sprite implements Runnable {
 	//velocity vars
 	private int vx = 0;
 	private int vy = 0;
+	private int health = 1000;
 	
 	private boolean jumpAttempt = false;
 	private boolean onGround = false;
@@ -117,6 +118,9 @@ public class MegaMan extends Sprite implements Runnable {
 					if (y > platforms[i].y - platforms[i].height && y < (platforms[i].y - platforms[i].height)+15) {
 						vy = 0; //reset our velocity
 						vx = 0;
+						if(x > 0) {
+						x -= 1;
+						}
 					}else {
 					
 						if (x >= platforms[i].x - platforms[i].width && x < platforms[i].x) {
@@ -167,6 +171,22 @@ public class MegaMan extends Sprite implements Runnable {
 			}
 		}
 		
+	}
+
+
+
+
+
+	public int getHealth() {
+		return health;
+	}
+
+
+
+
+
+	public void setHealth(int health) {
+		this.health = health;
 	}
 	
 	
